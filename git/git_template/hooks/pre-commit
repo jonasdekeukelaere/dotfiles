@@ -1,6 +1,10 @@
 #!/bin/sh
 # Check to see if we are on master branch. Stop accidental commits
-if [ $(git symbolic-ref HEAD 2>/dev/null) == "refs/heads/master" ]; then
+head=$(git symbolic-ref HEAD 2>/dev/null)
+if [ -z head ]; then
+	exit 0
+fi
+if [ $head == "refs/heads/master" ]; then
 	# Allows us to read user input below
 	exec < /dev/tty
 
