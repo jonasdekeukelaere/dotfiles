@@ -1,0 +1,115 @@
+# find dir
+find_project_dir() {
+	# show usage if there are no arguments
+	if (( $# < 1 ))
+	then
+		echo usage: find_project_dir projectname
+	else
+		echo $(find  ~/Sites/*/$1/.idea -type d -name .idea)
+	fi
+}
+
+# find a project (used for autocompletion)
+find_project() {
+	compadd `find ~/Sites -maxdepth 2 -mindepth 2 -type d | cut -d \/ -f 6`
+}
+
+# navigate to a project
+navigate_to_project() {
+	# show usage if there are no arguments
+	if (( $# < 1 ))
+	then
+		echo usage: navigate_to_project projectname
+	else
+		cd $(find_project_dir $1)/..
+	fi
+}
+
+# loop dirs and execute a command
+fordir() {
+	# show usage if there are no arguments
+	if (( $# < 1 ))
+	then
+		echo usage: fordir command
+	else
+		for dir in *
+		do
+			if [[ ! -h $dir ]]
+			then
+				cd $dir;
+				echo -e "\e[32m$dir\e[39m";
+				eval $@
+				cd ..;
+			fi
+		done
+	fi
+}
+
+# create a dir and cd into it
+newdir() {
+	# show usage if there are no arguments
+	if (( $# < 1 ))
+	then
+		echo usage: newdir folder
+	else
+		mkdir -p $1
+		cd $1
+	fi
+}
+
+# open a project
+open_project() {
+	# show usage if there are no arguments
+	if (( $# < 1 ))
+	then
+		echo usage: open_project projectname
+	else
+		$(open_project_in_browser $1)
+		cd $(find_project_dir $1)/..
+		pstorm $(find_project_dir $1)/..
+	fi
+}
+
+# open a project in a browser
+open_project_in_browser() {
+	# show usage if there are no arguments
+	if (( $# < 1 ))
+	then
+		echo usage: open_project_in_browser projectname
+	else
+		# find a directory that contains the phpstorm-preferences
+		CHUNKS=(`echo $(find_project_dir $1) | tr "/" "\n"`)
+		URL="http://${CHUNKS[5]}.${CHUNKS[4]}.dev"
+
+		open -a /Applications/Google\ Chrome.app $URL
+	fi
+}
+
+# copy pwd to the clipboard
+copy_pwd_to_clipboard() {
+	PWD=(`pwd`)
+	echo -n $PWD | pbcopy
+}
+
+serialize() {
+	# show usage if there are no arguments
+	if (( $# < 1 ))
+	then
+		echo usage: serialize value
+	else
+		OUTPUT=(`php -r "echo serialize('$1');"`)
+		echo -n $OUTPUT | pbcopy
+		echo $OUTPUT
+	fi
+}
+
+# autocomplete for the functions
+compdef find_project navigate_to_project
+compdef find_project open_project
+compdef find_project open_project_in_browser
+
+# aliases for faster usage
+alias b="open_project_in_browser"
+alias n="navigate_to_project"
+alias p="open_project"
+alias cpwd="copy_pwd_to_clipboard"

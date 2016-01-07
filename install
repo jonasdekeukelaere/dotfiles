@@ -1,0 +1,91 @@
+#!/bin/bash
+
+CURRENTDIR=$(pwd)
+
+# remove symlink, or backup old files
+function remove_or_backup {
+    if [ -h $1 ]
+    then
+        rm $1
+    else
+        if [[ -f $1 || -d $1 ]]
+        then
+            mv $1 $1.old
+        fi
+    fi
+}
+
+# make symlink
+function symlink {
+    if [[ -f $1 || -d $1 ]]
+    then
+        remove_or_backup $2
+        ln -s $CURRENTDIR/$1 $2
+    fi
+}
+
+# git
+symlink git/.gitignore ~/.gitignore
+symlink git/git_template ~/.git_template
+symlink git/.githelpers ~/.githelpers
+symlink git/.gitconfig ~/.gitconfig
+
+# zsh
+symlink zsh/themes/jonas.zsh-theme ~/.oh-my-zsh/themes/jonas.zsh-theme
+symlink zsh/.zshrc ~/.zshrc
+symlink zsh/functions.zsh ~/.oh-my-zsh/custom/functions.zsh
+symlink zsh/aliases.zsh ~/.oh-my-zsh/custom/aliases.zsh
+
+# vim
+# todo
+
+# composer
+# todo?
+
+# homebrew
+if ! type brew
+then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+brew doctor
+brew update
+brew upgrade
+brew install cowsay git bash node batik fontforge ttfautohint ttf2eot ruby sumodev_deploy sumodev
+
+# cask
+brew tap phinze/cask
+brew install brew-cask
+brew cask install google-chrome
+brew cask install firefox
+brew cask install alfred
+brew cask install cloudup
+brew cask install vlc
+brew cask install skype
+brew cask install boom
+brew cask install 1password
+brew cask install evernote
+brew cask install dropbox
+brew cask install google-drive
+brew cask install bittorrent
+
+brew cask install phpstorm
+brew cask install sublime-text
+brew cask install virtualbox
+brew cask install vagrant
+brew cask install cyberduck
+brew cask install wireshark
+brew cask install teamviewer
+brew cask install tunnelblick
+brew cask install slack
+
+brew cask install spotify
+brew cask install flux
+brew cask install beamer
+
+brew cask install steam
+brew cask install chessx
+
+# pow
+echo 'export POW_DST_PORT=81' >> ~/.powconfig
+curl get.pow.cx | sh
+

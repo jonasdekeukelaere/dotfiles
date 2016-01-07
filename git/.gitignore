@@ -1,0 +1,28 @@
+# OS X
+.DS_Store
+.idea
+.Spotlight-V100
+.Trashes
+
+# Windows
+Desktop.ini
+Thumbs.db
+
+# ZendStudio
+.project
+.buildpath
+.settings
+
+# MySQL Workbench
+*.mwb.bak
+
+# version control
+.svn
+.svn/*
+
+# SASS
+.sass-cache
+.rvmrc
+
+# Symfony console
+*.php~
